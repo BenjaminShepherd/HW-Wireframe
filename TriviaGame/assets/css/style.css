@@ -1,0 +1,27 @@
+body {
+    background-image: url(https://i.pinimg.com/originals/24/fe/99/24fe9901590da3958c574609f83fbcec.jpg);
+
+    background-size: cover;
+    
+}
+
+
+
+#title {
+    text-align:  center;
+    color: white;
+    text-shadow: 2px 2px red;
+}
+
+#subwrapper {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.116);
+    opacity: .9;
+    color: white;
+    text-shadow: 2px 2px red;
+    border: 2px solid red;
+    padding: 20px;
+
+}

@@ -1,153 +1,140 @@
 
-//create game that creates 3 multiple choice questions, with a timer, User gets 30 seconds to answer all three questions.
-//create timer of 30 seconds
-//write 3 questions with onclick function
-//
-//at the end of the 30 seconds, display to DOM how the user answered the questions
-
-//object  of questions & answers
+//runs the  start function after clicking start button
+$("#start-button").on("click", function () {
+    game.start();
+})
 
 
+//array of objects with all the questions and answers
 var questions = [{
     question: "Which city did the Utah Jazz originate in?",
-    answers: ["Seattle", "San Antonion", "New Orleans"],
-    name: "jazz",
-    correct: "New Orleans",
-    divClass: ".jazz",
-},
-{
-    question: "Which baseball team has the most World Series Titles?",
-    answers: ["Dodgers", "Braves", "Yankees"],
-    name: "yankees",
-    correct: "Yankees",
-    divClass: ".yankees",
+    answers: ["Seattle", "Milwuakee", "New Orleans"],
+    correctAnswer: "New Orleans"
 
-},
-{
-    question: "Which college football team played the first indoors Bowl Game?",
-    answers: ["Boston College", "Utah", "Wisconsin"],
-    name: "utah",
-    correct: "Utah",
-    divClass: ".utah",
-}]
+}, {
+    question: "What Baseball team has won the most World Series Titles?",
+    answers: ["Atlanta Braves", "New York Yankees", "LA Dodgers"],
+    correctAnswer: "New York Yankees"
+}, {
+    question: "Which college football team played in the first ever indoor bowl game?",
+    answers: ["Boston College", "Utah", "Clemson"],
+    correctAnswer: "Utah"
+}, {
+    question: "Which ballpark has the closest left field wall?",
+    answers: ["Fenway Park", "Turner Field", "Dodger Stadium"],
+    correctAnswer: "Fenway Park"
+}, {
+    question: "What city did the OKC Thunder originate in?",
+    answers: ["Tampa", "Oakland", "Seattle"],
+    correctAnswer: "Seattle"
+}];
 
-var labels = ["first", "second", "third"];
 
-var number = 10;
-
-//  Variable that will hold our interval ID when we execute
-//  the "run" function
-var intervalId;
-
-//  When the stop button gets clicked, run the stop function.
-$("#submitButton").on("click", stop);
-
-//  When the resume button gets clicked, execute the run function.
-$("#start-button").on("click", run);
-
-//  The run function sets an interval
-//  that runs the decrement function once a second.
-//  *****BUG FIX******** 
-//  Clearing the intervalId prior to setting our new intervalId will not allow multiple instances.
-function run() {
-    clearInterval(intervalId);
-    intervalId = setInterval(decrement, 1000);
-    $(this).parent().hide();
-    $('.container').show();
-    // countdown(30);
-    questionDisplay();
-};
-
-// function for displaying questions
-var questionDisplay = function () {
-    $(".questions :not('#sub-but')").empty();
-    for (var j = 0; j < 3; j++) {
-        $('.questions').prepend('<div class="' + questions[j].name + '"></div>');
-        $(questions[j].divClass).append('<div class ="ques-title">' + questions[j].question + '</div>');
-        // loops through answers for each radio button
-        for (var i = 0; i <= 2; i++) {
-            $(questions[j].divClass).append('<input type="radio"  name="' + questions[j].name + '" value="' + questions[j].answers[i] + '"/><label for="' + labels[i] + '">' + questions[j].answers[i] + '</label>');
+//create score variables & countdown clock, as well as the done function to end the quiz
+var game = {
+    correct: 0,
+    incorrect: 0,
+    counter: 30,
+    countdown: function () {
+        game.counter--;
+        $("#counter").html(game.counter)
+        if (game.counter <= 0) {
+            console.log("Time");
+            game.done();
         }
-        $('.questions').prepend('<hr />');
+    },
+
+    //create start function, loop through the questions and display them to the DOM, as well as a loop for the answers.
+    start: function () {
+        timer = setInterval(game.countdown, 1000);
+        $("#subwrapper").prepend("<h2>Time Remaining: <span id='counter'>30</span> Seconds</h2>")
+        $("#start-button").remove();
+        for (var i = 0; i < questions.length; i++) {
+            $("#subwrapper").append("<h2>" + questions[i].question + "</h2");
+            for (var j = 0; j < questions[i].answers.length; j++) {
+                $("#subwrapper").append("<input type='radio' name='question-" + i + "'value='" + questions[i].answers[j] + "'>" + questions[i].answers[j])
+            }
+        }
+
+        //create done function to check user answers compared to correct answers, and add them to the correct score.
+    },
+    done: function () {
+        $.each($("input[name='question-0']:checked"), function () {
+            if ($(this).val() == questions[0].correctAnswer) {
+                game.correct++;
+            } else {
+                game.incorrect++;
+            }
+        })
+
+        $.each($("input[name='question-1']:checked"), function () {
+            if ($(this).val() == questions[1].correctAnswer) {
+                game.correct++;
+            } else {
+                game.incorrect++;
+            }
+        })
+
+        $.each($("input[name='question-2']:checked"), function () {
+            if ($(this).val() == questions[2].correctAnswer) {
+                game.correct++;
+            } else {
+                game.incorrect++;
+            }
+        })
+
+        $.each($("input[name='question-3']:checked"), function () {
+            if ($(this).val() == questions[3].correctAnswer) {
+                game.correct++;
+            } else {
+                game.incorrect++;
+            }
+        })
+
+        $.each($("input[name='question-4']:checked"), function () {
+            if ($(this).val() == questions[4].correctAnswer) {
+                game.correct++;
+            } else {
+                game.incorrect++;
+            }
+        });
+        //make a result function to stop the countdown clock, and display the users correct and incorrect guesses.
+        this.result();
+    },
+    result: function () {
+        clearInterval(timer);
+        $("#subwrapper h2").remove();
+
+        $("#subwrapper").html("<h2>All Done!</h2>");
+        $("#subwrapper").append("<h3>Correct Answers: " + this.correct + "</h3>");
+        $("#subwrapper").append("<h3>Incorrect Answers: " + this.incorrect + "</h3>");
+        $("#subwrapper").append("<h3>Unanswered: " + (questions.length - (this.incorrect + this.correct)) + "</h3>");
     }
 }
 
 
-//  The decrement function.
-function decrement() {
-
-    //  Decrease number by one.
-    number--;
-
-    //  Show the number in the #show-number tag.
-    $("#countdown").html("<h2>" + number + "</h2>");
 
 
-    //  Once number hits zero...
-    if (number === 0) {
-
-        //  ...run the stop function.
-        stop();
 
 
-        //  Alert the user that time is up.
-        alert("Time Up!");
-
-    }
-}
 
 
-//  The stop function
-function stop() {
-
-    //  Clears our intervalId
-    //  We just pass the name of the interval
-    //  to the clearInterval function.
-    clearInterval(intervalId);
-
-};
 
 
-//  Execute the run function.
-run(); {
-
-    var correctAnswers = 0;
-    var wrongAnswers = 0;
-    var unAnswered = 0;
-
-    // loop through correctArray & radioName to match html elements & answers
-    for (var i = 0; i < 3; i++) {
-
-        if ($('input:radio[name="' + questions[i].name + '"]:checked').val() === questions[i].correct) {
-
-            correctAnswers++;
-        } else {
-            wrongAnswers++;
-        };
-    };
-
-    // once submit is clicked...
-    // tests
-    // stop timer
-
-    // fade out questions
-
-    // show answerScreen
-
-    // display correctAnswers
-    $('#correctAnswers').append(correctAnswers);
-    // display wrongAnswers
-    $('#wrongAnswers').append(wrongAnswers);
-
-    //     for (var i = 0; i < 3; i++) {
-
-    //         if ($('input:radio[name="' + questions[i].name + '"]:checked').val() === questions[i].correct) {
 
 
-    //             correctAnswers++;
-    //         }
-    //         $('#correctAnswers').append("You correctly answered  " + correctAnswers + " out of 3 questions! ");
+// var questions = [
+//     {
+//         prompt: "Which city did the Utah Jazz originate in?\n(a) Seattle\n\(b) Boston\n(c) New Orleans",
+//         answer: "c" 
+//     },
+//     {
+//         prompt: "What baseball team has the most World Series Titles?\n(a) Atlanta Braves\n\(b) New York Yankees\n(c) LA Dodgers",
+//         answer: "b"
+//     },
+//     {
+//         prompt: "Which college football team played in the first ever indoor bowl game?\n(a) Boston College\n\(b) Utah\n(c) Clemson",
+//         answer: "b"
+//     },
+// ]
 
-    //     }
-    // 
-}
